@@ -1,4 +1,4 @@
-let todos = [];
+// let todos = [];
 let filterValue = "all";
 //selections
 const todoForm = document.querySelector(".todo-form");
@@ -10,11 +10,15 @@ const todoSelect = document.querySelector(".filter-todos");
 
 //events
 todoForm.addEventListener("submit", addNewTodo);
-todoSelect.addEventListener("change", (e)=>{
-filterValue = e.target.value;
-filterTodo();
+todoSelect.addEventListener("change", e => {
+  filterValue = e.target.value;
+  filterTodo();
 });
 
+document.addEventListener("DOMContentLoaded" , (e)=>{
+const todos = getAllTodos();
+creatTodoList(todos);
+})
 //functions
 function addNewTodo(e) {
   e.preventDefault();
@@ -27,8 +31,9 @@ function addNewTodo(e) {
     isCompeleted: false,
   };
 
-  todos.push(newTodo);
-  creatTodoList(todos);
+  // todos.push(newTodo);
+ uploadTodos(newTodo) 
+  filterTodo();
 }
 
 function creatTodoList(todos) {
@@ -39,9 +44,9 @@ function creatTodoList(todos) {
             <span class="todo__createdAt">${new Date(
               item.createdAt
             ).toLocaleDateString("fa-IR")}</span>
-            <button class="todo__check" data-todo-id=${
-              item.id
-            }><i class="far ${item.isCompeleted?"fa-check-square":"fa-square"}"></i></button>
+            <button class="todo__check" data-todo-id=${item.id}><i class="far ${
+      item.isCompeleted ? "fa-check-square" : "fa-square"
+    }"></i></button>
             <button class="todo__remove" data-todo-id=${
               item.id
             }><i class="far fa-trash-alt"></i></button>
@@ -55,7 +60,7 @@ function creatTodoList(todos) {
   removeBtn.forEach(item => {
     item.addEventListener("click", removeTodo);
   });
-  
+
   const checkBtn = [...document.querySelectorAll(".todo__check")];
   checkBtn.forEach(item => {
     item.addEventListener("click", checkTodo);
@@ -64,6 +69,7 @@ function creatTodoList(todos) {
 
 function filterTodo() {
   // let selectionBox = e.target.value;
+  const todos = getAllTodos()
   switch (filterValue) {
     case "all": {
       creatTodoList(todos);
@@ -85,14 +91,34 @@ function filterTodo() {
 }
 
 function removeTodo(e) {
+  let todos = getAllTodos();
   const todoId = Number(e.target.dataset.todoId);
-  const filteredTodo = todos.filter(t => t.id != todoId);
-  todos = filteredTodo;
+  todos = todos.filter(t => t.id != todoId);
+  savedAllTodos(todos);
   filterTodo();
 }
-function checkTodo(e){
+function checkTodo(e) {
+  let todos = getAllTodos();
   const todoId = Number(e.target.dataset.todoId);
-  const todo = todos.find((t)=> t.id == todoId)
+  const todo = todos.find(t => t.id == todoId);
   todo.isCompeleted = !todo.isCompeleted;
+  savedAllTodos(todos);
   filterTodo();
+}
+
+//local Storage
+function getAllTodos() {
+  const savedTodos = JSON.parse(localStorage.getItem("todos"))||[];
+return savedTodos;
+}
+
+function uploadTodos(todo){
+const savedTodos = getAllTodos();
+savedTodos.push(todo);
+localStorage.setItem("todos" , JSON.stringify(savedTodos));
+return savedTodos;
+}
+
+function savedAllTodos(todos){
+  localStorage.setItem("todos", JSON.stringify(todos));
 }
