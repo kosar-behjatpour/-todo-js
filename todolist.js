@@ -1,5 +1,5 @@
 let todos = [];
-
+let filterValue = "all";
 //selections
 const todoForm = document.querySelector(".todo-form");
 const todoInput = document.querySelector(".todo-input");
@@ -10,7 +10,10 @@ const todoSelect = document.querySelector(".filter-todos");
 
 //events
 todoForm.addEventListener("submit", addNewTodo);
-todoSelect.addEventListener("change", filterTodo);
+todoSelect.addEventListener("change", (e)=>{
+filterValue = e.target.value;
+filterTodo();
+});
 
 //functions
 function addNewTodo(e) {
@@ -59,9 +62,9 @@ function creatTodoList(todos) {
   });
 }
 
-function filterTodo(e) {
-  let selectionBox = e.target.value;
-  switch (selectionBox) {
+function filterTodo() {
+  // let selectionBox = e.target.value;
+  switch (filterValue) {
     case "all": {
       creatTodoList(todos);
       break;
@@ -85,11 +88,11 @@ function removeTodo(e) {
   const todoId = Number(e.target.dataset.todoId);
   const filteredTodo = todos.filter(t => t.id != todoId);
   todos = filteredTodo;
-  creatTodoList(todos);
+  filterTodo();
 }
 function checkTodo(e){
   const todoId = Number(e.target.dataset.todoId);
   const todo = todos.find((t)=> t.id == todoId)
   todo.isCompeleted = !todo.isCompeleted;
-  creatTodoList(todos);
+  filterTodo();
 }
