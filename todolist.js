@@ -6,6 +6,7 @@ const todoInput = document.querySelector(".todo-input");
 const todoList = document.querySelector(".todolist");
 const todoSelect = document.querySelector(".filter-todos");
 // const removeBtn = document.querySelectorAll(".todo__remove");
+// const checkBtn = document.querySelectorAll(".todo__check");
 
 //events
 todoForm.addEventListener("submit", addNewTodo);
@@ -20,7 +21,7 @@ function addNewTodo(e) {
     id: Date.now(),
     createdAt: new Date().toISOString(),
     title: todoInput.value,
-    isCompeleted: true,
+    isCompeleted: false,
   };
 
   todos.push(newTodo);
@@ -30,14 +31,14 @@ function addNewTodo(e) {
 function creatTodoList(todos) {
   let result = "";
   todos.forEach(item => {
-    result += `<li class="todo">
+    result += `<li class="todo ${item.isCompeleted && "completed"}">
             <p class="todo__title">${item.title}</p>
             <span class="todo__createdAt">${new Date(
               item.createdAt
             ).toLocaleDateString("fa-IR")}</span>
             <button class="todo__check" data-todo-id=${
               item.id
-            }><i class="far fa-check-square"></i></button>
+            }><i class="far ${item.isCompeleted?"fa-check-square":"fa-square"}"></i></button>
             <button class="todo__remove" data-todo-id=${
               item.id
             }><i class="far fa-trash-alt"></i></button>
@@ -48,9 +49,13 @@ function creatTodoList(todos) {
   todoInput.value = "";
 
   const removeBtn = [...document.querySelectorAll(".todo__remove")];
-
   removeBtn.forEach(item => {
     item.addEventListener("click", removeTodo);
+  });
+  
+  const checkBtn = [...document.querySelectorAll(".todo__check")];
+  checkBtn.forEach(item => {
+    item.addEventListener("click", checkTodo);
   });
 }
 
@@ -77,8 +82,14 @@ function filterTodo(e) {
 }
 
 function removeTodo(e) {
-  const todoId = e.target.dataset.todoId;
+  const todoId = Number(e.target.dataset.todoId);
   const filteredTodo = todos.filter(t => t.id != todoId);
   todos = filteredTodo;
+  creatTodoList(todos);
+}
+function checkTodo(e){
+  const todoId = Number(e.target.dataset.todoId);
+  const todo = todos.find((t)=> t.id == todoId)
+  todo.isCompeleted = !todo.isCompeleted;
   creatTodoList(todos);
 }
