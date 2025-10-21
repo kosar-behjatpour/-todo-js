@@ -5,7 +5,7 @@ const todoForm = document.querySelector(".todo-form");
 const todoInput = document.querySelector(".todo-input");
 const todoList = document.querySelector(".todolist");
 const todoSelect = document.querySelector(".filter-todos");
-
+// const removeBtn = document.querySelectorAll(".todo__remove");
 
 //events
 todoForm.addEventListener("submit", addNewTodo);
@@ -47,6 +47,11 @@ function creatTodoList(todos) {
   todoList.innerHTML = result;
   todoInput.value = "";
 
+  const removeBtn = [...document.querySelectorAll(".todo__remove")];
+
+  removeBtn.forEach(item => {
+    item.addEventListener("click", removeTodo);
+  });
 }
 
 function filterTodo(e) {
@@ -71,3 +76,9 @@ function filterTodo(e) {
   }
 }
 
+function removeTodo(e) {
+  const todoId = e.target.dataset.todoId;
+  const filteredTodo = todos.filter(t => t.id != todoId);
+  todos = filteredTodo;
+  creatTodoList(todos);
+}
